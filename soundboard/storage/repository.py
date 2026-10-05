@@ -22,3 +22,14 @@ class SoundRepository:  # clase
             )
             sounds_list.append(sound)
         return sounds_list
+
+    def save_sounds(self, sounds: list[Sound]) -> None:
+        raw_sounds = []
+        for sound in sounds:
+            raw_sound = {
+                "name": sound.name,
+                "file": sound.file_path.name,
+            }
+            raw_sounds.append(raw_sound)
+        with self.data_file.open("w", encoding="utf-8") as sounds_file:
+            json.dump(raw_sounds, sounds_file, indent=4, ensure_ascii=False)
