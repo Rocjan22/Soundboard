@@ -1,8 +1,24 @@
+import json
 from pathlib import Path
+from soundboard.models.sound import Sound
 
 
-class SoundRepository:
-    def __init__(self, data_dir: Path):
-        self.sounds_dir = data_dir / "sounds"
+class SoundRepository:  # clase
+    def __init__(self, data_dir: Path):  # metodo
+        self.sounds_dir = data_dir / "sounds"  # atributo
         self.sounds_dir.mkdir(parents=True, exist_ok=True)
         self.data_file = data_dir / "sounds.json"
+
+    def load_sounds(self) -> list[Sound]:
+        if not self.data_file.exists():
+            return []
+        with self.data_file.open("r", encoding="utf-8") as sounds_file:
+            raw_sounds = json.load(sounds_file)
+        sounds_list = []
+        for raw_sound in raw_sounds:
+            sound = Sound(
+                name=raw_sound["name"],
+                file_path=self.sounds_dir / raw_sound["file"],
+            )
+            sounds_list.append(sound)
+        return sounds_list
