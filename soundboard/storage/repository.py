@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 from soundboard.models.sound import Sound
 
@@ -33,3 +34,10 @@ class SoundRepository:  # clase
             raw_sounds.append(raw_sound)
         with self.data_file.open("w", encoding="utf-8") as sounds_file:
             json.dump(raw_sounds, sounds_file, indent=4, ensure_ascii=False)
+
+    def add_sound(self, source_path: Path) -> Sound:
+        destination_path = self.sounds_dir / source_path.name
+        shutil.copy2(source_path, destination_path)
+        sound = Sound(name=source_path.stem, file_path=destination_path)
+        self.save_sounds(self.load_sounds() + [sound])
+        return sound
