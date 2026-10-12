@@ -35,10 +35,10 @@ class SoundRepository:  # clase
         with self.data_file.open("w", encoding="utf-8") as sounds_file:
             json.dump(raw_sounds, sounds_file, indent=4, ensure_ascii=False)
 
-    def add_sound(self, source_path: Path) -> Sound:
+    def add_sound(self, source_path: Path, name: str | None = None) -> Sound:
         destination_path = self._get_available_path(source_path)
         shutil.copy2(source_path, destination_path)
-        sound = Sound(name=source_path.stem, file_path=destination_path)
+        sound = Sound(name=name or source_path.stem, file_path=destination_path)
         self.save_sounds(self.load_sounds() + [sound])
         return sound
 
