@@ -1,4 +1,5 @@
 import pygame
+
 from soundboard.models.sound import Sound
 
 
