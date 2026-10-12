@@ -36,8 +36,19 @@ class SoundRepository:  # clase
             json.dump(raw_sounds, sounds_file, indent=4, ensure_ascii=False)
 
     def add_sound(self, source_path: Path) -> Sound:
-        destination_path = self.sounds_dir / source_path.name
+        destination_path = self._get_available_path(source_path)
         shutil.copy2(source_path, destination_path)
         sound = Sound(name=source_path.stem, file_path=destination_path)
         self.save_sounds(self.load_sounds() + [sound])
         return sound
+
+    def _get_available_path(self, source_path: Path) -> Path:
+        destination_path = self.sounds_dir / source_path.name
+        counter = 0
+        while destination_path.exists():
+            counter += 1
+            destination_path = destination_path.with_stem(
+                f"{source_path.stem}_{counter}"
+            )
+        return destination_path
+        
