@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
     def _add_sound_button(self, sound: Sound) -> None:
         button = SoundButton(sound)
         self.sound_buttons.append(button)
+        button.clicked.connect(lambda: self.player.play_sound(sound))
         self._relayout_buttons()
 
     def _relayout_buttons(self) -> None:
