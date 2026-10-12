@@ -1,5 +1,9 @@
+from pathlib import Path
+
 from PySide6.QtWidgets import (
+    QFileDialog,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QMainWindow,
     QPushButton,
@@ -29,6 +33,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         layout.addLayout(self._build_header())
 
+        self.add_button.clicked.connect(self._on_add_clicked)
+
     def _build_header(self) -> QHBoxLayout:
         header = QHBoxLayout()
         title = QLabel("Soundboard")
@@ -37,4 +43,25 @@ class MainWindow(QMainWindow):
         header.addStretch()
         header.addWidget(self.add_button)
         return header
+
+    def _on_add_clicked(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Selecciona un sonido",
+            "",
+            "Audio (*.mp3)",
+        )
+        if not file_path:
+            return
+        path = Path(file_path)
+        name, ok = QInputDialog.getText(
+            self,
+            "Nombre del botón",
+            "¿Cómo quieres llamar a este sonido?",
+            text=path.stem,
+        )
+        if not ok:
+            return
+        new_sound = self.repository.add_sound(source_path=path, name=name.strip())
+        print(new_sound)
         
