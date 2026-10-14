@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         layout.addLayout(self._build_header())
         layout.addWidget(self._build_grid())
+        layout.addLayout(self._build_footer())
 
         area = self.screen().availableGeometry()
         content_width = self.INITIAL_COLUMNS * self._cell_width()
@@ -51,6 +52,7 @@ class MainWindow(QMainWindow):
             self._add_sound_button(sound)
 
         self.add_button.clicked.connect(self._on_add_clicked)
+        self.stop_button.clicked.connect(self.player.stop_sound)
     
     # ------------------------------------------------------------------------
 
@@ -71,6 +73,15 @@ class MainWindow(QMainWindow):
         self.scroll.setWidget(content)
         self.grid.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         return self.scroll
+
+    def _build_footer(self) -> QHBoxLayout:
+        footer = QHBoxLayout()
+        self.stop_button = QPushButton("Stop")
+        self.stop_button.setFixedSize(100, 50)
+        footer.addStretch()
+        footer.addWidget(self.stop_button)
+        footer.addStretch()
+        return footer
     
     # ------------------------------------------------------------------------
 
