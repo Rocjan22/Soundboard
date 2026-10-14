@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
             self._add_sound_button(sound)
 
         self.add_button.clicked.connect(self._on_add_clicked)
-        self.stop_button.clicked.connect(self.player.stop_sound)
+        self.stop_button.clicked.connect(self._on_stop_clicked)
     
     # ------------------------------------------------------------------------
 
@@ -76,11 +76,13 @@ class MainWindow(QMainWindow):
 
     def _build_footer(self) -> QHBoxLayout:
         footer = QHBoxLayout()
+        self.playing_label = QLabel("")
         self.stop_button = QPushButton("Stop")
         self.stop_button.setFixedSize(100, 50)
-        footer.addStretch()
+        footer.addStretch(2)
         footer.addWidget(self.stop_button)
-        footer.addStretch()
+        footer.addStretch(1)
+        footer.addWidget(self.playing_label, 1)
         return footer
     
     # ------------------------------------------------------------------------
@@ -109,13 +111,21 @@ class MainWindow(QMainWindow):
     def resizeEvent(self, event) -> None:
         super().resizeEvent(event)
         QTimer.singleShot(0, self._relayout_buttons)
-    
+
+    def _on_sound_clicked(self, sound: Sound) -> None:
+        self.player.play_sound(sound)
+        self.playing_label.setText(f"Reproduciendo: {sound.name}")
+
+    def _on_stop_clicked(self) -> None:
+        self.player.stop_sound()
+        self.playing_label.setText("")
+
     # ------------------------------------------------------------------------
 
     def _add_sound_button(self, sound: Sound) -> None:
         button = SoundButton(sound)
         self.sound_buttons.append(button)
-        button.clicked.connect(lambda: self.player.play_sound(sound))
+        button.clicked.connect(lambda: self._on_sound_clicked(sound))
         self._relayout_buttons()
 
     def _relayout_buttons(self) -> None:
